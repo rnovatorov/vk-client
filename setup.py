@@ -17,6 +17,7 @@ setup(
     author_email="suenweek@protonmail.com",
     install_requires=[
         "attrs",
+        "six",
         "more-itertools",
         "vk"
     ],
