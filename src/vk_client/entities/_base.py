@@ -4,17 +4,18 @@ import attr
 @attr.s
 class Entity(object):
 
-    vk = attr.ib(repr=False)
+    _vk = attr.ib(repr=False)
 
 
-def entity_manager(entity_class):
+def entity_manager(entity_class=None):
 
     @attr.s
     class EntityManager(object):
 
-        vk = attr.ib()
+        _vk = attr.ib(repr=False)
 
-        def __call__(self, *args, **kwargs):
-            return entity_class(self.vk, *args, **kwargs)
+        if entity_class is not None:
+            def __call__(self, *args, **kwargs):
+                return entity_class(self._vk, *args, **kwargs)
 
     return EntityManager

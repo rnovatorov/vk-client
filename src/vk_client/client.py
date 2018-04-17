@@ -2,8 +2,9 @@ import attr
 import vk
 from vk_client import config
 from vk_client.utils import PartialSelf, create_sleep_hook
-from vk_client.entities.user import UserManager
+from vk_client.entities.bookmark import BookmarkManager
 from vk_client.entities.link import LinkManager
+from vk_client.entities.user import UserManager
 
 
 @attr.s
@@ -11,8 +12,9 @@ class VkClient(object):
 
     api = attr.ib()
 
-    User = PartialSelf(UserManager)
+    Bookmark = PartialSelf(BookmarkManager)
     Link = PartialSelf(LinkManager)
+    User = PartialSelf(UserManager)
 
     @classmethod
     def create(cls, access_token=None):
