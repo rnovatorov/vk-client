@@ -1,5 +1,7 @@
 import attr
-from vk_client import validators
+from vk_client import config, validators, errors
+from vk_client.enums import LikableType
+from vk_client.utils import offset_range
 from vk_client.entities._base import Entity, entity_manager
 
 
@@ -24,9 +26,39 @@ class Post(Entity):
         elif self.owner_is_group:
             return self._vk.Group(id=self.owner_id)
         else:
-            raise RuntimeError("Unreachable")
+            raise errors.Unreachable
+
+    def like(self):
+        self._vk.api.likes.add(
+            type=LikableType.POST.value,
+            owner_id=self.owner_id,
+            item_id=self.id
+        )
+
+    def unlike(self):
+        self._vk.api.likes.delete(
+            type=LikableType.POST.value,
+            owner_id=self.owner_id,
+            item_id=self.id
+        )
 
 
 @attr.s
 class PostManager(entity_manager(Post)):
-    pass
+
+    def count_liked(self):
+        response = self._vk.api.fave.getPosts(count=1)
+        return response["count"]
+
+    def get_liked(self, count=config.FAVE_CHUNK_SIZE_DEFAULT):
+        chunks = offset_range(0, count, config.FAVE_CHUNK_SIZE_MAX)
+        for offset, chunk_size in chunks:
+            response = self._vk.api.fave.getPosts(
+                count=chunk_size,
+                offset=offset
+            )
+            for item in response["items"]:
+                yield self._vk.Post(
+                    id=item["id"],
+                    owner_id=item["owner_id"]
+                )

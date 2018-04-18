@@ -2,7 +2,6 @@ import attr
 import vk
 from vk_client import config
 from vk_client.utils import PartialSelf, create_sleep_hook
-from vk_client.entities.fave import FaveManager
 from vk_client.entities.group import GroupManager
 from vk_client.entities.photo import PhotoManager
 from vk_client.entities.post import PostManager
@@ -16,7 +15,6 @@ class VkClient(object):
     api = attr.ib()
 
     # Entities
-    Fave = PartialSelf(FaveManager)
     Group = PartialSelf(GroupManager)
     Photo = PartialSelf(PhotoManager)
     Post = PartialSelf(PostManager)

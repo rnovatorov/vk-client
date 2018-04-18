@@ -18,6 +18,7 @@ setup(
     install_requires=[
         "attrs",
         "six",
+        "enum34",
         "more-itertools",
         "vk"
     ],
