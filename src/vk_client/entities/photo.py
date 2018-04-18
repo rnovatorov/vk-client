@@ -4,11 +4,12 @@ from vk_client.entities._base import Entity, entity_manager
 
 
 @attr.s
-class User(Entity):
+class Photo(Entity):
 
     id = attr.ib(validator=validators.positive)
+    owner_id = attr.ib(validator=validators.not_zero)
 
 
 @attr.s
-class UserManager(entity_manager(User)):
+class PhotoManager(entity_manager(Photo)):
     pass

@@ -4,11 +4,11 @@ from vk_client.entities._base import Entity, entity_manager
 
 
 @attr.s
-class User(Entity):
+class Group(Entity):
 
-    id = attr.ib(validator=validators.positive)
+    id = attr.ib(validator=validators.negative)
 
 
 @attr.s
-class UserManager(entity_manager(User)):
+class GroupManager(entity_manager(Group)):
     pass
