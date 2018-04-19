@@ -1,7 +1,6 @@
 import attr
-import vk
-from vk_client import config
-from vk_client.utils import PartialSelf, create_sleep_hook
+from vk_client.api import create_api
+from vk_client.utils import PartialSelf
 from vk_client.entities.group import GroupManager
 from vk_client.entities.photo import PhotoManager
 from vk_client.entities.post import PostManager
@@ -22,9 +21,5 @@ class VkClient(object):
 
     @classmethod
     def create(cls, access_token=None):
-        session = vk.Session(access_token)
-        sleep_hook = create_sleep_hook(config.API_RATE_LIMIT)
-        session.requests_session.hooks["response"].append(sleep_hook)
-        api = vk.API(session, v=config.API_VERSION)
-
+        api = create_api(access_token)
         return cls(api=api)
