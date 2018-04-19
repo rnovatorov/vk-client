@@ -1,4 +1,3 @@
-import time
 import attr
 from six.moves import range
 from more_itertools import chunked

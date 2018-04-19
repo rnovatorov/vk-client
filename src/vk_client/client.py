@@ -1,6 +1,7 @@
 import attr
 from vk_client.api import create_api
 from vk_client.utils import PartialSelf
+from vk_client.entities.comment import CommentManager
 from vk_client.entities.group import GroupManager
 from vk_client.entities.photo import PhotoManager
 from vk_client.entities.post import PostManager
@@ -14,6 +15,7 @@ class VkClient(object):
     api = attr.ib(repr=False)
 
     # Entities
+    Comment = PartialSelf(CommentManager)
     Group = PartialSelf(GroupManager)
     Photo = PartialSelf(PhotoManager)
     Post = PartialSelf(PostManager)

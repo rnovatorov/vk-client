@@ -12,11 +12,13 @@ setup(
     # long_description="",  # TODO: Add long description
     packages=find_packages("src"),
     package_dir={"": "src"},
-    # url="",  # TODO: Add repo url
+    url="https://github.com/Suenweek/vk-client",
     author="Suenweek",
     author_email="suenweek@protonmail.com",
     install_requires=[
         "attrs",
+        "arrow",
+        "cached-property",
         "six",
         "enum34",
         "more-itertools",
