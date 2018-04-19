@@ -3,18 +3,16 @@ from vk_client import config
 from vk_client.enums import LikableType
 from vk_client.utils import offset_range
 from vk_client.entities._base import Entity, entity_manager
-from vk_client.entities._mixins import make_likable_mixin, OwnedMixin
+from vk_client.entities._mixins import LikableMixin, OwnedMixin
 
 
 @attr.s
 class Photo(
     Entity,
-    make_likable_mixin(LikableType.PHOTO),
+    LikableMixin,
     OwnedMixin
 ):
-    """
-    TODO: Add description.
-    """
+    _likable_type = attr.ib(default=LikableType.PHOTO)
 
 
 @attr.s

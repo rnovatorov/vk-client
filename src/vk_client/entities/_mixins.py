@@ -2,29 +2,26 @@ import attr
 from vk_client import validators, errors
 
 
-def make_likable_mixin(likable_type):
+@attr.s
+class LikableMixin(object):
 
-    @attr.s
-    class LikableMixin(object):
+    id = attr.ib(validator=validators.positive)
+    owner_id = attr.ib(validator=validators.not_zero)
+    _likable_type = attr.ib()
 
-        id = attr.ib(validator=validators.positive)
-        owner_id = attr.ib(validator=validators.not_zero)
+    def like(self):
+        self._vk.api.likes.add(
+            type=self._likable_type.value,
+            owner_id=self.owner_id,
+            item_id=self.id
+        )
 
-        def like(self):
-            self._vk.api.likes.add(
-                type=likable_type.value,
-                owner_id=self.owner_id,
-                item_id=self.id
-            )
-
-        def unlike(self):
-            self._vk.api.likes.delete(
-                type=likable_type.value,
-                owner_id=self.owner_id,
-                item_id=self.id
-            )
-
-    return LikableMixin
+    def unlike(self):
+        self._vk.api.likes.delete(
+            type=self._likable_type.value,
+            owner_id=self.owner_id,
+            item_id=self.id
+        )
 
 
 @attr.s
