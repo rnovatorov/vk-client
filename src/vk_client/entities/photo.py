@@ -1,46 +1,20 @@
 import attr
-from vk_client import config, validators, errors
+from vk_client import config
 from vk_client.enums import LikableType
 from vk_client.utils import offset_range
 from vk_client.entities._base import Entity, entity_manager
+from vk_client.entities._mixins import make_likable_mixin, OwnedMixin
 
 
 @attr.s
-class Photo(Entity):
-
-    id = attr.ib(validator=validators.positive)
-    owner_id = attr.ib(validator=validators.not_zero)
-
-    @property
-    def owner_is_user(self):
-        return self.owner_id > 0
-
-    @property
-    def owner_is_group(self):
-        return self.owner_id < 0
-
-    @property
-    def owner(self):
-        if self.owner_is_user:
-            return self._vk.User(id=self.owner_id)
-        elif self.owner_is_group:
-            return self._vk.Group(id=self.owner_id)
-        else:
-            raise errors.Unreachable
-
-    def like(self):
-        self._vk.api.likes.add(
-            type=LikableType.PHOTO.value,
-            owner_id=self.owner_id,
-            item_id=self.id
-        )
-
-    def unlike(self):
-        self._vk.api.likes.delete(
-            type=LikableType.PHOTO.value,
-            owner_id=self.owner_id,
-            item_id=self.id
-        )
+class Photo(
+    Entity,
+    make_likable_mixin(LikableType.PHOTO),
+    OwnedMixin
+):
+    """
+    TODO: Add description.
+    """
 
 
 @attr.s
@@ -58,7 +32,7 @@ class PhotoManager(entity_manager(Photo)):
                 offset=offset
             )
             for item in response["items"]:
-                yield self._vk.Photo(
+                yield self(
                     id=item["id"],
                     owner_id=item["owner_id"]
                 )

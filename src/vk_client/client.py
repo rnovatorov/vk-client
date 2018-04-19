@@ -12,7 +12,7 @@ from vk_client.entities.user import UserManager
 class VkClient(object):
 
     # Api
-    api = attr.ib()
+    api = attr.ib(repr=False)
 
     # Entities
     Group = PartialSelf(GroupManager)
