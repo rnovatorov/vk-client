@@ -47,8 +47,13 @@ class Comment(
 @attr.s
 class CommentManager(entity_manager(Comment)):
 
-    def from_post(self, post, count=config.COMMENTS_CHUNK_SIZE_DEFAULT):
-        chunks = offset_range(0, count, config.COMMENTS_CHUNK_SIZE_MAX)
+    def from_post(self, post):
+        response = self._vk.api.wall.getComments(
+            owner_id=post.owner_id,
+            post_id=post.id,
+            count=1
+        )
+        chunks = offset_range(0, response["count"], config.COMMENTS_CHUNK_SIZE_MAX)
         for offset, chunk_size in chunks:
             response = self._vk.api.wall.getComments(
                 owner_id=post.owner_id,

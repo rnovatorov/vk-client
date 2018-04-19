@@ -18,12 +18,10 @@ class Photo(
 @attr.s
 class PhotoManager(entity_manager(Photo)):
 
-    def count_liked(self):
+    @property
+    def liked(self):
         response = self._vk.api.fave.getPhotos(count=1)
-        return response["count"]
-
-    def get_liked(self, count=config.FAVE_CHUNK_SIZE_DEFAULT):
-        chunks = offset_range(0, count, config.FAVE_CHUNK_SIZE_MAX)
+        chunks = offset_range(0, response["count"], config.FAVE_CHUNK_SIZE_MAX)
         for offset, chunk_size in chunks:
             response = self._vk.api.fave.getPhotos(
                 count=chunk_size,
