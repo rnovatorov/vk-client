@@ -1,10 +1,10 @@
-import contextlib
+import argparse
 import BaseHTTPServer
+import contextlib
+import requests
 import threading
 import urlparse
 import webbrowser
-import requests
-import argparse
 
 
 def main(args):
@@ -13,26 +13,37 @@ def main(args):
     class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
 
         def do_GET(self):
-            access_token = requests.get(make_get_token_url(
+            request_args = self.get_request_args()
+
+            token_url = make_token_url(
                 client_id=args.client_id,
                 client_secret=args.client_secret,
                 redirect_uri=redirect_uri,
-                code=self.get_request_args()["code"]
-            )).json()["access_token"]
+                code=request_args["code"]
+            )
+            response = requests.get(token_url)
+            payload = response.json()
+            access_token = payload["access_token"]
 
-            with open("access_token.txt", "w") as f:
+            with open(args.out, "w") as f:
                 f.write(access_token)
+
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write("Success.")
 
         def get_request_args(self):
             query_params = urlparse.urlparse(self.path).query
             return dict(kv.split("=") for kv in query_params.split("&"))
 
-    with serve_once((args.host, args.port), RequestHandler):
-        webbrowser.open(make_get_code_url(
+    server_address = (args.host, args.port)
+    with serve_once(server_address, RequestHandler):
+        code_url = make_code_url(
             client_id=args.client_id,
             redirect_uri=redirect_uri,
             scope=args.scope
-        ))
+        )
+        webbrowser.open(code_url)
 
 
 @contextlib.contextmanager
@@ -48,7 +59,7 @@ def serve_once(server_address, request_handler):
     httpd.server_close()
 
 
-def make_get_code_url(client_id, redirect_uri, scope=""):
+def make_code_url(client_id, redirect_uri, scope=""):
     return (
         "https://oauth.vk.com/authorize?"
         "client_id={client_id}&"
@@ -60,7 +71,7 @@ def make_get_code_url(client_id, redirect_uri, scope=""):
     )
 
 
-def make_get_token_url(client_id, client_secret, redirect_uri, code):
+def make_token_url(client_id, client_secret, redirect_uri, code):
     return (
         "https://oauth.vk.com/access_token?"
         "client_id={client_id}&"
@@ -77,6 +88,7 @@ if __name__ == "__main__":
     arg_parser.add_argument("--host", default="localhost")
     arg_parser.add_argument("--port", type=int, default=8080)
     arg_parser.add_argument("--scope", default="")
+    arg_parser.add_argument("--out", default="access-token.txt")
     arg_parser.add_argument("client_id", type=int)
     arg_parser.add_argument("client_secret")
 
