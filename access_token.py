@@ -23,14 +23,13 @@ def main(args):
             )
             response = requests.get(token_url)
             payload = response.json()
-            access_token = payload["access_token"]
 
-            with open(args.out, "w") as f:
-                f.write(access_token)
+            if "access_token" in payload:
+                with open(args.out, "w") as f:
+                    f.write(payload["access_token"])
 
-            self.send_response(200)
             self.end_headers()
-            self.wfile.write("Success.")
+            self.wfile.write(response.content)
 
         def get_request_args(self):
             query_params = urlparse.urlparse(self.path).query
