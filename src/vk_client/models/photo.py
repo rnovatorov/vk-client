@@ -2,13 +2,13 @@ import attr
 from vk_client import config
 from vk_client.enums import LikableType
 from vk_client.utils import offset_range
-from vk_client.entities._base import Entity, entity_manager
-from vk_client.entities._mixins import LikableMixin, OwnedMixin
+from vk_client.models._base import Model, model_manager
+from vk_client.models._mixins import LikableMixin, OwnedMixin
 
 
 @attr.s
 class Photo(
-    Entity,
+    Model,
     LikableMixin,
     OwnedMixin
 ):
@@ -16,7 +16,7 @@ class Photo(
 
 
 @attr.s
-class PhotoManager(entity_manager(Photo)):
+class PhotoManager(model_manager(Photo)):
 
     @property
     def liked(self):
