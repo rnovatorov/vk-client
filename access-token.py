@@ -7,7 +7,7 @@ import urlparse
 import webbrowser
 
 
-def main(args):
+def auth_code_flow(args):
     redirect_uri = "http://{args.host}:{args.port}".format(args=args)
 
     class RequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
@@ -15,13 +15,13 @@ def main(args):
         def do_GET(self):
             request_args = self.get_request_args()
 
-            token_url = make_token_url(
+            access_token_url = make_access_token_url(
                 client_id=args.client_id,
                 client_secret=args.client_secret,
                 redirect_uri=redirect_uri,
                 code=request_args["code"]
             )
-            response = requests.get(token_url)
+            response = requests.get(access_token_url)
             payload = response.json()
 
             if "access_token" in payload:
@@ -37,12 +37,23 @@ def main(args):
 
     server_address = (args.host, args.port)
     with serve_once(server_address, RequestHandler):
-        code_url = make_code_url(
+        authorize_url = make_authorize_url(
             client_id=args.client_id,
             redirect_uri=redirect_uri,
+            response_type="code",
             scope=args.scope
         )
-        webbrowser.open(code_url)
+        webbrowser.open(authorize_url)
+
+
+def implicit_flow(args):
+    authorize_url = make_authorize_url(
+        client_id=args.client_id,
+        redirect_uri="blank.html",
+        response_type="token",
+        scope=args.scope
+    )
+    webbrowser.open(authorize_url)
 
 
 @contextlib.contextmanager
@@ -58,19 +69,19 @@ def serve_once(server_address, request_handler):
     httpd.server_close()
 
 
-def make_code_url(client_id, redirect_uri, scope=""):
+def make_authorize_url(client_id, redirect_uri, response_type, scope=""):
     return (
         "https://oauth.vk.com/authorize?"
         "client_id={client_id}&"
         "redirect_uri={redirect_uri}&"
         "scope={scope}&"
-        "response_type=code&"
+        "response_type={response_type}&"
         "display=page"
         .format(**locals())
     )
 
 
-def make_token_url(client_id, client_secret, redirect_uri, code):
+def make_access_token_url(client_id, client_secret, redirect_uri, code):
     return (
         "https://oauth.vk.com/access_token?"
         "client_id={client_id}&"
@@ -81,14 +92,32 @@ def make_token_url(client_id, client_secret, redirect_uri, code):
     )
 
 
-if __name__ == "__main__":
+def create_parser():
     arg_parser = argparse.ArgumentParser()
+    subparsers = arg_parser.add_subparsers()
 
-    arg_parser.add_argument("--host", default="localhost")
-    arg_parser.add_argument("--port", type=int, default=8080)
-    arg_parser.add_argument("--scope", default="")
-    arg_parser.add_argument("--out", default="access-token.txt")
-    arg_parser.add_argument("client_id", type=int)
-    arg_parser.add_argument("client_secret")
+    implicit_parser = subparsers.add_parser("implicit")
+    implicit_parser.add_argument("--scope", default="")
+    implicit_parser.add_argument("client_id", type=int)
+    implicit_parser.set_defaults(handler=implicit_flow)
 
-    main(arg_parser.parse_args())
+    authcode_parser = subparsers.add_parser("authcode")
+    authcode_parser.add_argument("--host", default="localhost")
+    authcode_parser.add_argument("--port", type=int, default=8080)
+    authcode_parser.add_argument("--out", default="access-token.txt")
+    authcode_parser.add_argument("--scope", default="")
+    authcode_parser.add_argument("client_id", type=int)
+    authcode_parser.add_argument("client_secret")
+    authcode_parser.set_defaults(handler=auth_code_flow)
+
+    return arg_parser
+
+
+def main():
+    arg_parser = create_parser()
+    args = arg_parser.parse_args()
+    args.handler(args)
+
+
+if __name__ == "__main__":
+    main()

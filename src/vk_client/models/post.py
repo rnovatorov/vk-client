@@ -16,7 +16,7 @@ class Post(
     LikableMixin,
     OwnedMixin
 ):
-    _likable_type = attr.ib(default=LikableType.POST)
+    LIKABLE_TYPE = LikableType.POST
 
     @property
     def date(self):
@@ -39,6 +39,22 @@ class Post(
 @attr.s
 class PostManager(model_manager(Post)):
 
+    def from_owner(self, owner):
+        response = self._vk.api.wall.get(owner_id=owner.id, count=1)
+        chunks = offset_range(0, response["count"], config.WALL_CHUNK_SIZE_MAX)
+        for offset, chunk_size in chunks:
+            response = self._vk.api.wall.get(
+                owner_id=owner.id,
+                offset=offset,
+                count=chunk_size
+            )
+            for item in response["items"]:
+                yield self(
+                    id=item["id"],
+                    author_id=item["from_id"],
+                    owner_id=item["owner_id"]
+                )
+
     def from_comment(self, comment):
         return self(
             id=comment.post_id,
@@ -52,8 +68,8 @@ class PostManager(model_manager(Post)):
         chunks = offset_range(0, response["count"], config.FAVE_CHUNK_SIZE_MAX)
         for offset, chunk_size in chunks:
             response = self._vk.api.fave.getPosts(
-                count=chunk_size,
-                offset=offset
+                offset=offset,
+                count=chunk_size
             )
             for item in response["items"]:
                 yield self(

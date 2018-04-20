@@ -16,9 +16,10 @@ class Comment(
     LikableMixin,
     OwnedMixin
 ):
+    LIKABLE_TYPE = LikableType.COMMENT
+
     post_id = attr.ib(validator=validators.positive)
     post_author_id = attr.ib(validator=validators.not_zero)
-    _likable_type = attr.ib(default=LikableType.COMMENT)
 
     @property
     def post(self):
@@ -53,7 +54,7 @@ class CommentManager(model_manager(Comment)):
             post_id=post.id,
             count=1
         )
-        chunks = offset_range(0, response["count"], config.COMMENTS_CHUNK_SIZE_MAX)
+        chunks = offset_range(0, response["count"], config.WALL_CHUNK_SIZE_MAX)
         for offset, chunk_size in chunks:
             response = self._vk.api.wall.getComments(
                 owner_id=post.owner_id,

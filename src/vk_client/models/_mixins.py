@@ -31,7 +31,6 @@ class LikableMixin(object):
 
     id = attr.ib(validator=validators.positive)
     owner_id = attr.ib(validator=validators.not_zero)
-    _likable_type = attr.ib()
 
     @property
     def likes_count(self):
@@ -48,7 +47,7 @@ class LikableMixin(object):
     def like(self):
         if self.can_like:
             self._vk.api.likes.add(
-                type=self._likable_type.value,
+                type=self.LIKABLE_TYPE.value,
                 owner_id=self.owner_id,
                 item_id=self.id
             )
@@ -57,15 +56,11 @@ class LikableMixin(object):
     def unlike(self):
         if self.liked:
             self._vk.api.likes.delete(
-                type=self._likable_type.value,
+                type=self.LIKABLE_TYPE.value,
                 owner_id=self.owner_id,
                 item_id=self.id
             )
             del self._data
-
-    @property
-    def _data(self):
-        raise NotImplementedError
 
 
 @attr.s

@@ -12,7 +12,7 @@ class Photo(
     LikableMixin,
     OwnedMixin
 ):
-    _likable_type = attr.ib(default=LikableType.PHOTO)
+    LIKABLE_TYPE = LikableType.PHOTO
 
 
 @attr.s
@@ -24,8 +24,8 @@ class PhotoManager(model_manager(Photo)):
         chunks = offset_range(0, response["count"], config.FAVE_CHUNK_SIZE_MAX)
         for offset, chunk_size in chunks:
             response = self._vk.api.fave.getPhotos(
-                count=chunk_size,
-                offset=offset
+                offset=offset,
+                count=chunk_size
             )
             for item in response["items"]:
                 yield self(
