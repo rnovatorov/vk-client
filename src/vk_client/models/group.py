@@ -19,8 +19,7 @@ class Group(Model):
     def screen_name(self):
         return self._data["screen_name"]
 
-    @property
-    def posts(self):
+    def get_posts(self):
         return self._vk.Post.from_owner(self)
 
     @cached_property

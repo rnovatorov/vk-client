@@ -19,12 +19,10 @@ class User(Model):
     def last_name(self):
         return self._data["last_name"]
 
-    @property
-    def posts(self):
+    def get_posts(self):
         return self._vk.Post.from_owner(self)
 
-    @property
-    def groups(self):
+    def get_groups(self):
         return self._vk.Group.from_user(self)
 
     @cached_property

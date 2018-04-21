@@ -1,5 +1,6 @@
 import attr
 from six.moves import range
+from itertools import count
 from more_itertools import chunked
 
 
@@ -10,6 +11,15 @@ class PartialSelf(object):
 
     def __get__(self, instance, owner):
         return self.receiver(instance)
+
+
+def count_to(start=0, stop=float("inf"), step=1):
+    counter = count(start, step)
+    for n in counter:
+        if n < stop:
+            yield n
+        else:
+            raise StopIteration
 
 
 def offset_range(start, stop, step):

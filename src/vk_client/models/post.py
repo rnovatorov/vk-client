@@ -26,8 +26,7 @@ class Post(
     def text(self):
         return self._data["text"]
 
-    @property
-    def comments(self):
+    def get_comments(self):
         return self._vk.Comment.from_post(self)
 
     @cached_property
@@ -62,8 +61,7 @@ class PostManager(model_manager(Post)):
             owner_id=comment.owner_id
         )
 
-    @property
-    def liked(self):
+    def get_liked(self):
         response = self._vk.api.fave.getPosts(count=1)
         chunks = offset_range(0, response["count"], config.FAVE_CHUNK_SIZE_MAX)
         for offset, chunk_size in chunks:
