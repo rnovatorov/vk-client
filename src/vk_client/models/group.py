@@ -16,6 +16,10 @@ class Group(Model):
         return self._data["name"]
 
     @property
+    def screen_name(self):
+        return self._data["screen_name"]
+
+    @property
     def posts(self):
         return self._vk.Post.from_owner(self)
 
@@ -27,6 +31,20 @@ class Group(Model):
 
 @attr.s
 class GroupManager(model_manager(Group)):
+
+    def from_search(self, q):
+        response = self._vk.api.groups.search(count=1, q=q)
+        chunks = offset_range(0, response["count"], config.SEARCH_CHUNK_SIZE)
+        for offset, chunk_size in chunks:
+            response = self._vk.api.groups.search(
+                offset=offset,
+                count=chunk_size,
+                q=q
+            )
+            for item in response["items"]:
+                yield self(
+                    id=-item["id"]
+                )
 
     def from_user(self, user):
         response = self._vk.api.groups.get(user_id=user.id, count=1)
