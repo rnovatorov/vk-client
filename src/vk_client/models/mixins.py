@@ -38,7 +38,7 @@ class LikableMixin(object):
 
     @property
     def can_like(self):
-        return bool(self._data["likes"]["can_like"])
+        return not self.liked
 
     @property
     def liked(self):

@@ -1,6 +1,5 @@
 import attr
 from vk_client.api import create_api
-from vk_client.utils import PartialSelf
 from vk_client.models.comment import CommentManager
 from vk_client.models.group import GroupManager
 from vk_client.models.photo import PhotoManager
@@ -15,11 +14,11 @@ class VkClient(object):
     api = attr.ib(repr=False)
 
     # Models
-    Comment = PartialSelf(CommentManager)
-    Group = PartialSelf(GroupManager)
-    Photo = PartialSelf(PhotoManager)
-    Post = PartialSelf(PostManager)
-    User = PartialSelf(UserManager)
+    Comment = attr.ib(default=attr.Factory(CommentManager, takes_self=True))
+    Group = attr.ib(default=attr.Factory(GroupManager, takes_self=True))
+    Photo = attr.ib(default=attr.Factory(PhotoManager, takes_self=True))
+    Post = attr.ib(default=attr.Factory(PostManager, takes_self=True))
+    User = attr.ib(default=attr.Factory(UserManager, takes_self=True))
 
     @classmethod
     def create(cls, access_token=None):

@@ -3,7 +3,7 @@ from more_itertools import one
 from cached_property import cached_property
 from vk_client import config, validators
 from vk_client.utils import offset_range
-from vk_client.models._base import Model, model_manager
+from vk_client.models.base import Model, model_manager
 
 
 @attr.s
