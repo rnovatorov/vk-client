@@ -3,7 +3,7 @@ from more_itertools import one
 from cached_property import cached_property
 from vk_client import config
 from vk_client.enums import LikableType
-from vk_client.utils import offset_range
+from vk_client.utils import with_offset, offset_range
 from vk_client.models.base import Model, model_manager
 from vk_client.models.mixins import LikableMixin, OwnedMixin
 
@@ -27,6 +27,19 @@ class Photo(
 
 @attr.s
 class PhotoManager(model_manager(Photo)):
+
+    @with_offset(step=config.FAVE_CHUNK_SIZE_MAX)
+    def get_liked_with_offset(self, offset, step):
+        return [
+            self(
+                id=item["id"],
+                owner_id=item["owner_id"]
+            )
+            for item in self._vk.api.fave.getPhotos(
+                offset=offset,
+                count=step
+            )["items"]
+        ]
 
     def get_liked(self):
         response = self._vk.api.fave.getPhotos(count=1)
