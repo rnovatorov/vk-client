@@ -2,7 +2,7 @@ import attr
 from more_itertools import one
 from cached_property import cached_property
 from vk_client import config, validators
-from vk_client.utils import offset_range
+from vk_client.utils import exhausted, flattened
 from vk_client.models.base import Model, model_manager
 
 
@@ -34,16 +34,16 @@ class User(Model):
 @attr.s
 class UserManager(model_manager(User)):
 
-    def from_search(self, q):
-        response = self._vk.api.users.search(count=1, q=q)
-        chunks = offset_range(0, response["count"], config.SEARCH_CHUNK_SIZE)
-        for offset, chunk_size in chunks:
-            response = self._vk.api.users.search(
-                offset=offset,
-                count=chunk_size,
-                q=q
+    @flattened()
+    @exhausted(step=config.FAVE_CHUNK_SIZE_MAX)
+    def from_search(self, q, offset, count):
+        return [
+            self(
+                id=item["id"]
             )
-            for item in response["items"]:
-                yield self(
-                    id=item["id"]
-                )
+            for item in self._vk.api.users.search(
+                offset=offset,
+                count=count,
+                q=q
+            )["items"]
+        ]

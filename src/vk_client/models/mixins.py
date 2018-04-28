@@ -38,10 +38,10 @@ class LikableMixin(object):
 
     @property
     def can_like(self):
-        return not self.liked
+        return not self.is_liked
 
     @property
-    def liked(self):
+    def is_liked(self):
         return bool(self._data["likes"]["user_likes"])
 
     def like(self):
@@ -54,7 +54,7 @@ class LikableMixin(object):
             del self._data
 
     def unlike(self):
-        if self.liked:
+        if self.is_liked:
             self._vk.api.likes.delete(
                 type=self.LIKABLE_TYPE.value,
                 owner_id=self.owner_id,

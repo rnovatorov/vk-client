@@ -2,7 +2,7 @@ import attr
 from more_itertools import one
 from cached_property import cached_property
 from vk_client import config, validators
-from vk_client.utils import offset_range
+from vk_client.utils import exhausted, flattened
 from vk_client.models.base import Model, model_manager
 
 
@@ -31,30 +31,30 @@ class Group(Model):
 @attr.s
 class GroupManager(model_manager(Group)):
 
-    def from_search(self, q):
-        response = self._vk.api.groups.search(count=1, q=q)
-        chunks = offset_range(0, response["count"], config.SEARCH_CHUNK_SIZE)
-        for offset, chunk_size in chunks:
-            response = self._vk.api.groups.search(
-                offset=offset,
-                count=chunk_size,
-                q=q
+    @flattened()
+    @exhausted(step=config.SEARCH_CHUNK_SIZE)
+    def from_search(self, q, offset, count):
+        return [
+            self(
+                id=-item["id"]
             )
-            for item in response["items"]:
-                yield self(
-                    id=-item["id"]
-                )
+            for item in self._vk.api.groups.search(
+                offset=offset,
+                count=count,
+                q=q
+            )["items"]
+        ]
 
-    def from_user(self, user):
-        response = self._vk.api.groups.get(user_id=user.id, count=1)
-        chunks = offset_range(0, response["count"], config.SEARCH_CHUNK_SIZE)
-        for offset, chunk_size in chunks:
-            response = self._vk.api.groups.get(
+    @flattened()
+    @exhausted(step=config.SEARCH_CHUNK_SIZE)
+    def from_user(self, user, offset, count):
+        return [
+            self(
+                id=-item
+            )
+            for item in self._vk.api.groups.get(
                 user_id=user.id,
                 offset=offset,
-                count=chunk_size
-            )
-            for item in response["items"]:
-                yield self(
-                    id=-item
-                )
+                count=count
+            )["items"]
+        ]

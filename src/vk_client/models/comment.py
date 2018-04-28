@@ -4,7 +4,7 @@ from more_itertools import one
 from cached_property import cached_property
 from vk_client import config, validators
 from vk_client.enums import LikableType
-from vk_client.utils import offset_range
+from vk_client.utils import exhausted, flattened
 from vk_client.models.base import Model, model_manager
 from vk_client.models.mixins import AuthoredMixin, LikableMixin, OwnedMixin
 
@@ -48,25 +48,21 @@ class Comment(
 @attr.s
 class CommentManager(model_manager(Comment)):
 
-    def from_post(self, post):
-        response = self._vk.api.wall.getComments(
-            owner_id=post.owner_id,
-            post_id=post.id,
-            count=1
-        )
-        chunks = offset_range(0, response["count"], config.WALL_CHUNK_SIZE_MAX)
-        for offset, chunk_size in chunks:
-            response = self._vk.api.wall.getComments(
+    @flattened()
+    @exhausted(step=config.WALL_CHUNK_SIZE_MAX)
+    def from_post(self, post, offset, count):
+        return [
+            self(
+                id=item["id"],
+                author_id=item["from_id"],
+                owner_id=post.owner_id,
+                post_id=post.id,
+                post_author_id=post.author_id
+            )
+            for item in self._vk.api.wall.getComments(
                 owner_id=post.owner_id,
                 post_id=post.id,
                 offset=offset,
-                count=chunk_size
-            )
-            for item in response["items"]:
-                yield self(
-                    id=item["id"],
-                    author_id=item["from_id"],
-                    owner_id=post.owner_id,
-                    post_id=post.id,
-                    post_author_id=post.author_id
-                )
+                count=count
+            )["items"]
+        ]

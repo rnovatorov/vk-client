@@ -1,22 +1,27 @@
 from six.moves import range
 from functools import wraps
 from itertools import count
-from more_itertools import chunked
+from more_itertools import chunked, flatten, make_decorator
 
 
-def with_offset(step=1):
+flattened = make_decorator(flatten)
+
+
+def exhausted(step=1):
     def decorator(func):
         @wraps(func)
-        def wrapper(*args, **fkwargs):
-            init_offset = fkwargs.pop("offset", 0)
-            for offset in count(start=init_offset, step=step):
-                rv = func(*args, offset=offset, step=step, **fkwargs)
-                if rv:
-                    for i in rv:
-                        yield i
-                else:
-                    raise StopIteration
+        def wrapper(*args, **kwargs):
+            start = kwargs.pop("offset", 0)
+            counter = count(start=start, step=step)
+
+            def generator():
+                offset = next(counter)
+                return func(*args, offset=offset, count=step, **kwargs)
+
+            return iter(generator, [])
+
         return wrapper
+
     return decorator
 
 

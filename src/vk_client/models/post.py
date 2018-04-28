@@ -4,7 +4,7 @@ from more_itertools import one
 from cached_property import cached_property
 from vk_client import config
 from vk_client.enums import LikableType
-from vk_client.utils import offset_range
+from vk_client.utils import exhausted, flattened
 from vk_client.models.base import Model, model_manager
 from vk_client.models.mixins import AuthoredMixin, LikableMixin, OwnedMixin
 
@@ -38,21 +38,21 @@ class Post(
 @attr.s
 class PostManager(model_manager(Post)):
 
-    def from_owner(self, owner):
-        response = self._vk.api.wall.get(owner_id=owner.id, count=1)
-        chunks = offset_range(0, response["count"], config.WALL_CHUNK_SIZE_MAX)
-        for offset, chunk_size in chunks:
-            response = self._vk.api.wall.get(
+    @flattened()
+    @exhausted(step=config.WALL_CHUNK_SIZE_MAX)
+    def from_owner(self, owner, offset, count):
+        return [
+            self(
+                id=item["id"],
+                author_id=item["from_id"],
+                owner_id=item["owner_id"]
+            )
+            for item in self._vk.api.wall.get(
                 owner_id=owner.id,
                 offset=offset,
-                count=chunk_size
-            )
-            for item in response["items"]:
-                yield self(
-                    id=item["id"],
-                    author_id=item["from_id"],
-                    owner_id=item["owner_id"]
-                )
+                count=count
+            )["items"]
+        ]
 
     def from_comment(self, comment):
         return self(
@@ -61,17 +61,17 @@ class PostManager(model_manager(Post)):
             owner_id=comment.owner_id
         )
 
-    def get_liked(self):
-        response = self._vk.api.fave.getPosts(count=1)
-        chunks = offset_range(0, response["count"], config.FAVE_CHUNK_SIZE_MAX)
-        for offset, chunk_size in chunks:
-            response = self._vk.api.fave.getPosts(
-                offset=offset,
-                count=chunk_size
+    @flattened()
+    @exhausted(step=config.FAVE_CHUNK_SIZE_MAX)
+    def get_liked(self, offset, count):
+        return [
+            self(
+                id=item["id"],
+                author_id=item["from_id"],
+                owner_id=item["owner_id"]
             )
-            for item in response["items"]:
-                yield self(
-                    id=item["id"],
-                    author_id=item["from_id"],
-                    owner_id=item["owner_id"]
-                )
+            for item in self._vk.api.fave.getPosts(
+                offset=offset,
+                count=count
+            )["items"]
+        ]
