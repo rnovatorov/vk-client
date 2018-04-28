@@ -26,8 +26,16 @@ class Post(
     def text(self):
         return self._data["text"]
 
+    @property
+    def comments_count(self):
+        return self._data["comments"]["count"]
+
     def get_comments(self):
         return self._vk.Comment.from_post(self)
+
+    @property
+    def reposts_count(self):
+        return self._data["reposts"]["count"]
 
     @cached_property
     def _data(self):
