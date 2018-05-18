@@ -14,7 +14,7 @@ class Photo(
     LikableMixin,
     OwnedMixin
 ):
-    LIKABLE_TYPE = LikableType.PHOTO
+    _LIKABLE_TYPE = LikableType.PHOTO
 
     @cached_property
     def _data(self):

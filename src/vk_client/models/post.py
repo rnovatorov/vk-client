@@ -16,7 +16,7 @@ class Post(
     LikableMixin,
     OwnedMixin
 ):
-    LIKABLE_TYPE = LikableType.POST
+    _LIKABLE_TYPE = LikableType.POST
 
     @property
     def date(self):

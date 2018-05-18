@@ -47,7 +47,7 @@ class LikableMixin(object):
     def like(self):
         if self.can_like:
             self._vk.api.likes.add(
-                type=self.LIKABLE_TYPE.value,
+                type=self._LIKABLE_TYPE.value,
                 owner_id=self.owner_id,
                 item_id=self.id
             )
@@ -56,7 +56,7 @@ class LikableMixin(object):
     def unlike(self):
         if self.is_liked:
             self._vk.api.likes.delete(
-                type=self.LIKABLE_TYPE.value,
+                type=self._LIKABLE_TYPE.value,
                 owner_id=self.owner_id,
                 item_id=self.id
             )

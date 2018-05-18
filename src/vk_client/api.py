@@ -3,8 +3,9 @@ import vk
 from vk_client import config
 
 
-def create_api(access_token):
-    session = vk.Session(access_token)
+def create_api(access_token, captcha_handler):
+    session_class = type("Session", (vk.Session,), {"get_captcha_key": captcha_handler})
+    session = session_class(access_token)
     sleep_hook = create_sleep_hook(config.API_RATE_LIMIT)
     session.requests_session.hooks["response"].append(sleep_hook)
     return vk.API(session, v=config.API_VERSION)

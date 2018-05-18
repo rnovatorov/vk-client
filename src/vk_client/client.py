@@ -1,5 +1,6 @@
 import attr
 from vk_client.api import create_api
+from vk_client.utils import manual_captcha_handler
 from vk_client.models.comment import CommentManager
 from vk_client.models.group import GroupManager
 from vk_client.models.photo import PhotoManager
@@ -21,6 +22,6 @@ class VkClient(object):
     User = attr.ib(default=attr.Factory(UserManager, takes_self=True))
 
     @classmethod
-    def create(cls, access_token=None):
-        api = create_api(access_token)
+    def create(cls, access_token=None, captcha_handler=manual_captcha_handler):
+        api = create_api(access_token, captcha_handler)
         return cls(api=api)

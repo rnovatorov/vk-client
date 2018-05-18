@@ -1,6 +1,8 @@
+import webbrowser
 from six.moves import range
 from functools import wraps
 from itertools import count
+from six.moves import input
 from more_itertools import chunked, flatten, make_decorator
 
 
@@ -29,3 +31,8 @@ def offset_range(start, stop, step):
     chunks = chunked(range(start, stop), step)
     for i, chunk in enumerate(chunks):
         yield i * step, len(chunk)
+
+
+def manual_captcha_handler(self, captcha_image_url):
+    webbrowser.open(captcha_image_url)
+    return input("Enter the captcha: > ")

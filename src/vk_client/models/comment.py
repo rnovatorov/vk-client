@@ -16,7 +16,7 @@ class Comment(
     LikableMixin,
     OwnedMixin
 ):
-    LIKABLE_TYPE = LikableType.COMMENT
+    _LIKABLE_TYPE = LikableType.COMMENT
 
     post_id = attr.ib(validator=validators.positive)
     post_author_id = attr.ib(validator=validators.not_zero)
