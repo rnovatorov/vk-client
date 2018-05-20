@@ -5,6 +5,11 @@ tests_deps = [
     "pytest"
 ]
 
+captcha_handlers_deps = [
+    "requests",
+    "Pillow"
+]
+
 setup(
     name="vk-client",
     version="0.0.1",
@@ -26,6 +31,7 @@ setup(
     ],
     tests_require=tests_deps,
     extras_require={
-        "tests": tests_deps
+        "tests": tests_deps,
+        "captcha-handlers": captcha_handlers_deps
     }
 )
