@@ -27,11 +27,10 @@ def gui_captcha_handler(_, captcha_image_url):
     captcha_input.focus_set()
     captcha_input.pack()
 
-    button = tk.Button(frame, text="Go", command=frame.quit)
+    button = tk.Button(frame, text="Go", command=root.destroy)
     captcha_input.bind("<Return>", lambda _: button.invoke())
     button.pack()
 
     root.mainloop()
-    root.destroy()
 
     return captcha_var.get()

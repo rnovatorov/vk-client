@@ -1,7 +1,7 @@
 import attr
 from more_itertools import one
 from cached_property import cached_property
-from vk_client import config, validators
+from vk_client import config, errors, validators
 from vk_client.utils import exhausted, flattened
 from vk_client.models.base import Model, model_manager
 
@@ -25,7 +25,10 @@ class Group(Model):
     @cached_property
     def _data(self):
         response = self._vk.api.groups.getById(group_id=-self.id)
-        return one(response)
+        try:
+            return one(response)
+        except ValueError:
+            raise errors.NotFound(self)
 
 
 @attr.s

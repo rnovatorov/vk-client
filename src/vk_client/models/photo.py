@@ -1,7 +1,7 @@
 import attr
 from more_itertools import one
 from cached_property import cached_property
-from vk_client import config
+from vk_client import config, errors
 from vk_client.enums import LikableType
 from vk_client.utils import exhausted, flattened
 from vk_client.models.base import Model, model_manager
@@ -22,7 +22,10 @@ class Photo(
             photos=self.full_id,
             extended=True
         )
-        return one(response)
+        try:
+            return one(response)
+        except ValueError:
+            raise errors.NotFound(self)
 
 
 @attr.s

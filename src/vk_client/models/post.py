@@ -2,7 +2,7 @@ import attr
 import arrow
 from more_itertools import one
 from cached_property import cached_property
-from vk_client import config
+from vk_client import config, errors
 from vk_client.enums import LikableType
 from vk_client.utils import exhausted, flattened
 from vk_client.models.base import Model, model_manager
@@ -40,7 +40,10 @@ class Post(
     @cached_property
     def _data(self):
         response = self._vk.api.wall.getById(posts=self.full_id)
-        return one(response)
+        try:
+            return one(response)
+        except ValueError:
+            raise errors.NotFound(self)
 
 
 @attr.s
