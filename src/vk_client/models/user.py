@@ -3,7 +3,7 @@ from more_itertools import one
 from cached_property import cached_property
 from vk_client import config, validators
 from vk_client.utils import exhausted, flattened
-from vk_client.models.base import Model, model_manager
+from vk_client.models.base import Model, ModelManager
 
 
 @attr.s
@@ -32,7 +32,9 @@ class User(Model):
 
 
 @attr.s
-class UserManager(model_manager(User)):
+class UserManager(ModelManager):
+
+    _model_class = User
 
     @flattened()
     @exhausted(step=config.FAVE_CHUNK_SIZE_MAX)
