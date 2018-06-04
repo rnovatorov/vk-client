@@ -4,7 +4,7 @@ from cached_property import cached_property
 from vk_client import config, errors
 from vk_client.enums import LikableType
 from vk_client.utils import exhausted, flattened
-from vk_client.models.base import Model, model_manager
+from vk_client.models.base import Model, ModelManager
 from vk_client.models.mixins import LikableMixin, OwnedMixin
 
 
@@ -14,7 +14,7 @@ class Photo(
     LikableMixin,
     OwnedMixin
 ):
-    _LIKABLE_TYPE = LikableType.PHOTO
+    _likable_type = LikableType.PHOTO
 
     @cached_property
     def _data(self):
@@ -29,7 +29,9 @@ class Photo(
 
 
 @attr.s
-class PhotoManager(model_manager(Photo)):
+class PhotoManager(ModelManager):
+
+    _model_class = Photo
 
     @flattened()
     @exhausted(step=config.FAVE_CHUNK_SIZE_MAX)

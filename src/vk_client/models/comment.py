@@ -5,7 +5,7 @@ from cached_property import cached_property
 from vk_client import config, validators
 from vk_client.enums import LikableType
 from vk_client.utils import exhausted, flattened
-from vk_client.models.base import Model, model_manager
+from vk_client.models.base import Model, ModelManager
 from vk_client.models.mixins import AuthoredMixin, LikableMixin, OwnedMixin
 
 
@@ -16,7 +16,7 @@ class Comment(
     LikableMixin,
     OwnedMixin
 ):
-    _LIKABLE_TYPE = LikableType.COMMENT
+    _likable_type = LikableType.COMMENT
 
     post_id = attr.ib(validator=validators.positive)
     post_author_id = attr.ib(validator=validators.not_zero)
@@ -46,7 +46,9 @@ class Comment(
 
 
 @attr.s
-class CommentManager(model_manager(Comment)):
+class CommentManager(ModelManager):
+
+    _model_class = Comment
 
     @flattened()
     @exhausted(step=config.WALL_CHUNK_SIZE_MAX)

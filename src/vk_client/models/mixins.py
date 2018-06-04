@@ -29,6 +29,8 @@ class AuthoredMixin(object):
 @attr.s
 class LikableMixin(object):
 
+    _likable_type = NotImplemented
+
     id = attr.ib(validator=validators.positive)
     owner_id = attr.ib(validator=validators.not_zero)
 
@@ -47,7 +49,7 @@ class LikableMixin(object):
     def like(self):
         if self.can_like:
             self._vk.api.likes.add(
-                type=self._LIKABLE_TYPE.value,
+                type=self._likable_type.value,
                 owner_id=self.owner_id,
                 item_id=self.id
             )
@@ -56,7 +58,7 @@ class LikableMixin(object):
     def unlike(self):
         if self.is_liked:
             self._vk.api.likes.delete(
-                type=self._LIKABLE_TYPE.value,
+                type=self._likable_type.value,
                 owner_id=self.owner_id,
                 item_id=self.id
             )

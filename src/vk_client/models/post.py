@@ -5,7 +5,7 @@ from cached_property import cached_property
 from vk_client import config, errors
 from vk_client.enums import LikableType
 from vk_client.utils import exhausted, flattened
-from vk_client.models.base import Model, model_manager
+from vk_client.models.base import Model, ModelManager
 from vk_client.models.mixins import AuthoredMixin, LikableMixin, OwnedMixin
 
 
@@ -16,7 +16,7 @@ class Post(
     LikableMixin,
     OwnedMixin
 ):
-    _LIKABLE_TYPE = LikableType.POST
+    _likable_type = LikableType.POST
 
     @property
     def date(self):
@@ -47,7 +47,9 @@ class Post(
 
 
 @attr.s
-class PostManager(model_manager(Post)):
+class PostManager(ModelManager):
+
+    _model_class = Post
 
     @flattened()
     @exhausted(step=config.WALL_CHUNK_SIZE_MAX)

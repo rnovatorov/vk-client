@@ -3,7 +3,7 @@ from more_itertools import one
 from cached_property import cached_property
 from vk_client import config, errors, validators
 from vk_client.utils import exhausted, flattened
-from vk_client.models.base import Model, model_manager
+from vk_client.models.base import Model, ModelManager
 
 
 @attr.s
@@ -32,7 +32,9 @@ class Group(Model):
 
 
 @attr.s
-class GroupManager(model_manager(Group)):
+class GroupManager(ModelManager):
+
+    _model_class = Group
 
     @flattened()
     @exhausted(step=config.SEARCH_CHUNK_SIZE)
