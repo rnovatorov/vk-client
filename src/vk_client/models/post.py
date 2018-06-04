@@ -49,7 +49,7 @@ class Post(
 @attr.s
 class PostManager(ModelManager):
 
-    _model_class = Post
+    _model = Post
 
     @flattened()
     @exhausted(step=config.WALL_CHUNK_SIZE_MAX)

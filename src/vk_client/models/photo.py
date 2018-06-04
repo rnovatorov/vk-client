@@ -31,7 +31,7 @@ class Photo(
 @attr.s
 class PhotoManager(ModelManager):
 
-    _model_class = Photo
+    _model = Photo
 
     @flattened()
     @exhausted(step=config.FAVE_CHUNK_SIZE_MAX)

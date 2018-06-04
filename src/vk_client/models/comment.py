@@ -48,7 +48,7 @@ class Comment(
 @attr.s
 class CommentManager(ModelManager):
 
-    _model_class = Comment
+    _model = Comment
 
     @flattened()
     @exhausted(step=config.WALL_CHUNK_SIZE_MAX)

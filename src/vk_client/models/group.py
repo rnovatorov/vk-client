@@ -34,7 +34,7 @@ class Group(Model):
 @attr.s
 class GroupManager(ModelManager):
 
-    _model_class = Group
+    _model = Group
 
     @flattened()
     @exhausted(step=config.SEARCH_CHUNK_SIZE)

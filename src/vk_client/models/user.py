@@ -37,7 +37,7 @@ class User(Model):
 @attr.s
 class UserManager(ModelManager):
 
-    _model_class = User
+    _model = User
 
     @flattened()
     @exhausted(step=config.FAVE_CHUNK_SIZE_MAX)
@@ -52,3 +52,12 @@ class UserManager(ModelManager):
                 q=q
             )["items"]
         ]
+
+    def from_screen_name(self, screen_name):
+        response = self._vk.api.users.get(user_ids=screen_name)
+        try:
+            return self(
+                id=one(response)["id"]
+            )
+        except ValueError:
+            raise errors.NotFound(self)
