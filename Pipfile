@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+tox = "*"
+pytest = "*"
+
+[packages]
+vk = "*"
+requests = "*"
+attrs = "*"
+six = "*"
+cached-property = "*"
+"enum34" = "*"
+more-itertools = "*"
+arrow = "*"
+
+[requires]
+python_version = "2.7"

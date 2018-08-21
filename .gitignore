@@ -107,3 +107,6 @@ venv.bak/
 
 # Access token
 *-token.txt
+
+# Pipfile.lock
+Pipfile.lock
