@@ -29,10 +29,10 @@ class AuthoredMixin(object):
 @attr.s
 class LikableMixin(object):
 
-    _likable_type = NotImplemented
-
     id = attr.ib(validator=validators.positive)
     owner_id = attr.ib(validator=validators.not_zero)
+
+    _likable_type = NotImplemented
 
     @property
     def likes_count(self):

@@ -16,10 +16,10 @@ class Comment(
     LikableMixin,
     OwnedMixin
 ):
-    _likable_type = LikableType.COMMENT
-
     post_id = attr.ib(validator=validators.positive)
     post_author_id = attr.ib(validator=validators.not_zero)
+
+    _likable_type = LikableType.COMMENT
 
     @property
     def post(self):
