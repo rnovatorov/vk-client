@@ -1,15 +1,19 @@
-import attr
-from more_itertools import one
-from cached_property import cached_property
-from vk_client import config, errors, validators
-from vk_client.utils import exhausted, flattened
-from vk_client.models.base import Model, ModelManager
+import more_itertools as mit
+import cached_property
+from vk_client import config, errors, utils, validators
+from vk_client.models import base, mixins
 
 
-@attr.s
-class User(Model):
+class User(
+    base.Model,
+    mixins.HasId
+):
+    def __init__(self, vk, id):
+        assert validators.positive(id)
 
-    id = attr.ib(validator=validators.positive)
+        super(User, self).__init__(vk)
+
+        self._id = id
 
     @property
     def first_name(self):
@@ -25,22 +29,21 @@ class User(Model):
     def get_groups(self):
         return self._vk.Group.from_user(self)
 
-    @cached_property
+    @cached_property.cached_property
     def _data(self):
         response = self._vk.api.users.get(user_ids=self.id)
         try:
-            return one(response)
+            return mit.one(response)
         except ValueError:
             raise errors.NotFound(self)
 
 
-@attr.s
-class UserManager(ModelManager):
+class UserManager(base.ModelManager):
 
     _model = User
 
-    @flattened()
-    @exhausted(step=config.FAVE_CHUNK_SIZE_MAX)
+    @utils.flattened()
+    @utils.exhausted(step=config.FAVE_CHUNK_SIZE_MAX)
     def from_search(self, q, offset, count):
         return [
             self(
@@ -57,7 +60,7 @@ class UserManager(ModelManager):
         response = self._vk.api.users.get(user_ids=screen_name)
         try:
             return self(
-                id=one(response)["id"]
+                id=mit.one(response)["id"]
             )
         except ValueError:
             raise errors.NotFound(self)

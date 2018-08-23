@@ -1,22 +1,27 @@
-import attr
 import arrow
-from more_itertools import one
-from cached_property import cached_property
-from vk_client import config, errors
-from vk_client.enums import LikableType
-from vk_client.utils import exhausted, flattened
-from vk_client.models.base import Model, ModelManager
-from vk_client.models.mixins import AuthoredMixin, LikableMixin, OwnedMixin
+import more_itertools as mit
+import cached_property
+from vk_client import config, enums, errors, utils, validators
+from vk_client.models import base, mixins
 
 
-@attr.s
 class Post(
-    Model,
-    AuthoredMixin,
-    LikableMixin,
-    OwnedMixin
+    base.Model,
+    mixins.Authored,
+    mixins.Likable
 ):
-    _likable_type = LikableType.POST
+    _likable_type = enums.LikableType.POST
+
+    def __init__(self, vk, id, author_id, owner_id):
+        assert validators.positive(id)
+        assert validators.not_zero(author_id)
+        assert validators.not_zero(owner_id)
+
+        super(Post, self).__init__(vk)
+
+        self._id = id
+        self._author_id = author_id
+        self._owner_id = owner_id
 
     @property
     def date(self):
@@ -37,22 +42,21 @@ class Post(
     def reposts_count(self):
         return self._data["reposts"]["count"]
 
-    @cached_property
+    @cached_property.cached_property
     def _data(self):
         response = self._vk.api.wall.getById(posts=self.full_id)
         try:
-            return one(response)
+            return mit.one(response)
         except ValueError:
             raise errors.NotFound(self)
 
 
-@attr.s
-class PostManager(ModelManager):
+class PostManager(base.ModelManager):
 
     _model = Post
 
-    @flattened()
-    @exhausted(step=config.WALL_CHUNK_SIZE_MAX)
+    @utils.flattened()
+    @utils.exhausted(step=config.WALL_CHUNK_SIZE_MAX)
     def from_owner(self, owner, offset, count):
         return [
             self(
@@ -74,8 +78,8 @@ class PostManager(ModelManager):
             owner_id=comment.owner_id
         )
 
-    @flattened()
-    @exhausted(step=config.FAVE_CHUNK_SIZE_MAX)
+    @utils.flattened()
+    @utils.exhausted(step=config.FAVE_CHUNK_SIZE_MAX)
     def get_liked(self, offset, count):
         return [
             self(

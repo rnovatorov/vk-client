@@ -1,15 +1,19 @@
-import attr
-from more_itertools import one
-from cached_property import cached_property
-from vk_client import config, errors, validators
-from vk_client.utils import exhausted, flattened
-from vk_client.models.base import Model, ModelManager
+import more_itertools as mit
+import cached_property
+from vk_client import config, errors, utils, validators
+from vk_client.models import base, mixins
 
 
-@attr.s
-class Group(Model):
+class Group(
+    base.Model,
+    mixins.HasId
+):
+    def __init__(self, vk, id):
+        assert validators.negative(id)
 
-    id = attr.ib(validator=validators.negative)
+        super(Group, self).__init__(vk)
+
+        self._id = id
 
     @property
     def name(self):
@@ -22,22 +26,21 @@ class Group(Model):
     def get_posts(self):
         return self._vk.Post.from_owner(self)
 
-    @cached_property
+    @cached_property.cached_property
     def _data(self):
         response = self._vk.api.groups.getById(group_id=-self.id)
         try:
-            return one(response)
+            return mit.one(response)
         except ValueError:
             raise errors.NotFound(self)
 
 
-@attr.s
-class GroupManager(ModelManager):
+class GroupManager(base.ModelManager):
 
     _model = Group
 
-    @flattened()
-    @exhausted(step=config.SEARCH_CHUNK_SIZE)
+    @utils.flattened()
+    @utils.exhausted(step=config.SEARCH_CHUNK_SIZE)
     def from_search(self, q, offset, count):
         return [
             self(
@@ -50,8 +53,8 @@ class GroupManager(ModelManager):
             )["items"]
         ]
 
-    @flattened()
-    @exhausted(step=config.SEARCH_CHUNK_SIZE)
+    @utils.flattened()
+    @utils.exhausted(step=config.SEARCH_CHUNK_SIZE)
     def from_user(self, user, offset, count):
         return [
             self(

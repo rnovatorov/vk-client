@@ -1,40 +1,42 @@
-import attr
-from more_itertools import one
-from cached_property import cached_property
-from vk_client import config, errors
-from vk_client.enums import LikableType
-from vk_client.utils import exhausted, flattened
-from vk_client.models.base import Model, ModelManager
-from vk_client.models.mixins import LikableMixin, OwnedMixin
+import more_itertools as mit
+import cached_property
+from vk_client import config, enums, errors, utils, validators
+from vk_client.models import base, mixins
 
 
-@attr.s
 class Photo(
-    Model,
-    LikableMixin,
-    OwnedMixin
+    base.Model,
+    mixins.Likable
 ):
-    _likable_type = LikableType.PHOTO
+    _likable_type = enums.LikableType.PHOTO
 
-    @cached_property
+    def __init__(self, vk, id, owner_id):
+        assert validators.positive(id)
+        assert validators.not_zero(owner_id)
+
+        super(Photo, self).__init__(vk)
+
+        self._id = id
+        self._owner_id = owner_id
+
+    @cached_property.cached_property
     def _data(self):
         response = self._vk.api.photos.getById(
             photos=self.full_id,
             extended=True
         )
         try:
-            return one(response)
+            return mit.one(response)
         except ValueError:
             raise errors.NotFound(self)
 
 
-@attr.s
-class PhotoManager(ModelManager):
+class PhotoManager(base.ModelManager):
 
     _model = Photo
 
-    @flattened()
-    @exhausted(step=config.FAVE_CHUNK_SIZE_MAX)
+    @utils.flattened()
+    @utils.exhausted(step=config.FAVE_CHUNK_SIZE_MAX)
     def get_liked(self, offset, count):
         return [
             self(

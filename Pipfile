@@ -10,7 +10,6 @@ pytest = "*"
 [packages]
 vk = "*"
 requests = "*"
-attrs = "*"
 six = "*"
 cached-property = "*"
 "enum34" = "*"

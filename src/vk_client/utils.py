@@ -1,20 +1,20 @@
-from functools import wraps
-from itertools import count
+import functools
+import itertools
 from six.moves import range
-from more_itertools import chunked, flatten, make_decorator
+import more_itertools as mit
 
 
-flattened = make_decorator(flatten)
+flattened = mit.make_decorator(mit.flatten)
 
 
 def exhausted(step=1):
 
     def decorator(func):
 
-        @wraps(func)
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):
             start = kwargs.pop("offset", 0)
-            counter = count(start=start, step=step)
+            counter = itertools.count(start=start, step=step)
 
             def generator():
                 offset = next(counter)
@@ -28,6 +28,6 @@ def exhausted(step=1):
 
 
 def offset_range(start, stop, step):
-    chunks = chunked(range(start, stop), step)
+    chunks = mit.chunked(range(start, stop), step)
     for i, chunk in enumerate(chunks):
         yield i * step, len(chunk)

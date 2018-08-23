@@ -1,20 +1,24 @@
-import attr
 import requests
 from six.moves.urllib import parse
-from vk_client.enums import GroupEventType
-from vk_client.models.base import Model, ModelManager
+from vk_client import enums, validators
+from vk_client.models import base
 
 
 ACT = "a_check"
 
 
-@attr.s
-class BotsLongPoll(Model):
+class BotsLongPoll(base.Model):
 
-    server = attr.ib()
-    key = attr.ib()
-    ts = attr.ib()
-    wait = attr.ib(default=25)
+    def __init__(self, vk, server, key, ts, wait=25):
+        assert validators.positive(ts)
+        assert validators.positive(wait)
+
+        super(BotsLongPoll, self).__init__(vk)
+
+        self.server = server
+        self.key = key
+        self.ts = ts
+        self.wait = wait
 
     def get_updates(self):
         url = self._make_url()
@@ -23,7 +27,7 @@ class BotsLongPoll(Model):
         self.ts = payload["ts"]
         return [
             self._vk.GroupEvent(
-                type=GroupEventType(update["type"]),
+                type=enums.GroupEventType(update["type"]),
                 object=update["object"]
             )
             for update in payload["updates"]
@@ -39,8 +43,7 @@ class BotsLongPoll(Model):
         return "?".join([self.server, query])
 
 
-@attr.s
-class BotsLongPollManager(ModelManager):
+class BotsLongPollManager(base.ModelManager):
 
     _model = BotsLongPoll
 

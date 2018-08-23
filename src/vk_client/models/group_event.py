@@ -1,15 +1,11 @@
-import attr
-from vk_client.models.base import Model, ModelManager
+from vk_client.models import base
 
 
-@attr.s
-class GroupEvent(Model):
+class GroupEvent(base.Model):
 
-    type = attr.ib()
-    _object = attr.ib()
+    pass
 
 
-@attr.s
-class GroupEventManager(ModelManager):
+class GroupEventManager(base.ModelManager):
 
     _model = GroupEvent

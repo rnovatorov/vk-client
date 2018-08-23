@@ -1,36 +1,78 @@
-import attr
-from vk_client import validators, errors
+from vk_client import errors
 
 
-@attr.s
-class AuthoredMixin(object):
+class HasVk(object):
 
-    id = attr.ib(validator=validators.positive)
-    author_id = attr.ib(validator=validators.not_zero)
+    _vk = NotImplemented
 
+
+class HasData(object):
+
+    _data = NotImplemented
+
+
+class HasId(object):
+
+    _id = NotImplemented
+
+    @property
+    def id(self):
+        return self._id
+
+
+class Authored(HasVk, HasId):
+
+    _author_id = NotImplemented
+
+    # TODO: Move to User class.
     @property
     def author_is_user(self):
-        return self.author_id > 0
+        return self._author_id > 0
 
+    # TODO: Move to Group class.
     @property
     def author_is_group(self):
-        return self.author_id < 0
+        return self._author_id < 0
 
     @property
     def author(self):
         if self.author_is_user:
-            return self._vk.User(id=self.author_id)
+            return self._vk.User(id=self._author_id)
         elif self.author_is_group:
-            return self._vk.Group(id=self.author_id)
+            return self._vk.Group(id=self._author_id)
         else:
             raise errors.Unreachable
 
 
-@attr.s
-class LikableMixin(object):
+class Owned(HasVk, HasId):
 
-    id = attr.ib(validator=validators.positive)
-    owner_id = attr.ib(validator=validators.not_zero)
+    _owner_id = NotImplemented
+
+    @property
+    def full_id(self):
+        return "{}_{}".format(self._owner_id, self.id)
+
+    # TODO: Move to User class.
+    @property
+    def owner_is_user(self):
+        return self._owner_id > 0
+
+    # TODO: Move to Group class.
+    @property
+    def owner_is_group(self):
+        return self._owner_id < 0
+
+    @property
+    def owner(self):
+        if self.owner_is_user:
+            return self._vk.User(id=self._owner_id)
+        elif self.owner_is_group:
+            return self._vk.Group(id=self._owner_id)
+        else:
+            raise errors.Unreachable
+
+
+class Likable(HasData, Owned):
 
     _likable_type = NotImplemented
 
@@ -50,7 +92,7 @@ class LikableMixin(object):
         if self.can_like:
             self._vk.api.likes.add(
                 type=self._likable_type.value,
-                owner_id=self.owner_id,
+                owner_id=self._owner_id,
                 item_id=self.id
             )
             del self._data
@@ -59,35 +101,7 @@ class LikableMixin(object):
         if self.is_liked:
             self._vk.api.likes.delete(
                 type=self._likable_type.value,
-                owner_id=self.owner_id,
+                owner_id=self._owner_id,
                 item_id=self.id
             )
             del self._data
-
-
-@attr.s
-class OwnedMixin(object):
-
-    id = attr.ib(validator=validators.positive)
-    owner_id = attr.ib(validator=validators.not_zero)
-
-    @property
-    def full_id(self):
-        return "{self.owner_id}_{self.id}".format(self=self)
-
-    @property
-    def owner_is_user(self):
-        return self.owner_id > 0
-
-    @property
-    def owner_is_group(self):
-        return self.owner_id < 0
-
-    @property
-    def owner(self):
-        if self.owner_is_user:
-            return self._vk.User(id=self.owner_id)
-        elif self.owner_is_group:
-            return self._vk.Group(id=self.owner_id)
-        else:
-            raise errors.Unreachable

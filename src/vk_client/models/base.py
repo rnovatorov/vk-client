@@ -1,16 +1,10 @@
-import attr
-
-
-@attr.s
 class Model(object):
 
-    _vk = attr.ib(repr=False)
+    def __init__(self, vk):
+        self._vk = vk
 
 
-@attr.s
-class ModelManager(object):
-
-    _vk = attr.ib(repr=False)
+class ModelManager(Model):
 
     _model = NotImplemented
 

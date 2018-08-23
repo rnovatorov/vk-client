@@ -1,25 +1,31 @@
-import attr
 import arrow
-from more_itertools import one
-from cached_property import cached_property
-from vk_client import config, validators
-from vk_client.enums import LikableType
-from vk_client.utils import exhausted, flattened
-from vk_client.models.base import Model, ModelManager
-from vk_client.models.mixins import AuthoredMixin, LikableMixin, OwnedMixin
+import more_itertools as mit
+import cached_property
+from vk_client import config, enums, utils, validators
+from vk_client.models import base, mixins
 
 
-@attr.s
 class Comment(
-    Model,
-    AuthoredMixin,
-    LikableMixin,
-    OwnedMixin
+    base.Model,
+    mixins.Authored,
+    mixins.Likable
 ):
-    post_id = attr.ib(validator=validators.positive)
-    post_author_id = attr.ib(validator=validators.not_zero)
+    _likable_type = enums.LikableType.COMMENT
 
-    _likable_type = LikableType.COMMENT
+    def __init__(self, vk, id, author_id, owner_id, post_id, post_author_id):
+        assert validators.positive(id)
+        assert validators.not_zero(author_id)
+        assert validators.not_zero(owner_id)
+        assert validators.positive(post_id)
+        assert validators.not_zero(post_author_id)
+
+        super(Comment, self).__init__(vk)
+
+        self._id = id
+        self._author_id = author_id
+        self._owner_id = owner_id
+        self._post_id = post_id
+        self._post_author_id = post_author_id
 
     @property
     def post(self):
@@ -33,25 +39,24 @@ class Comment(
     def text(self):
         return self._data["text"]
 
-    @cached_property
+    @cached_property.cached_property
     def _data(self):
         response = self._vk.api.wall.getComments(
-            owner_id=self.owner_id,
-            post_id=self.post_id,
+            owner_id=self._owner_id,
+            post_id=self._post_id,
             start_comment_id=self.id,
             need_likes=True,
             count=1
         )
-        return one(response["items"])
+        return mit.one(response["items"])
 
 
-@attr.s
-class CommentManager(ModelManager):
+class CommentManager(base.ModelManager):
 
     _model = Comment
 
-    @flattened()
-    @exhausted(step=config.WALL_CHUNK_SIZE_MAX)
+    @utils.flattened()
+    @utils.exhausted(step=config.WALL_CHUNK_SIZE_MAX)
     def from_post(self, post, offset, count):
         return [
             self(
