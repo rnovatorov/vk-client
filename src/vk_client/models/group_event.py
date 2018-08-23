@@ -45,8 +45,9 @@ class GroupEventManager(_base.ModelManager):
         ]:
             return self(
                 type=type,
-                # TODO: Implement.
-                object=object
+                object=self._vk.Message(
+                    id=object["id"]
+                )
             )
 
         elif type in [

@@ -10,6 +10,7 @@ class VkClient(object):
         self.Comment = models.CommentManager(vk=self)
         self.Group = models.GroupManager(vk=self)
         self.GroupEvent = models.GroupEventManager(vk=self)
+        self.Message = models.MessageManager(vk=self)
         self.Photo = models.PhotoManager(vk=self)
         self.Post = models.PostManager(vk=self)
         self.User = models.UserManager(vk=self)
