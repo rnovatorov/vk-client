@@ -1,4 +1,12 @@
+import os
+from codecs import open
 from setuptools import setup, find_packages
+
+
+here_dir = os.path.abspath(os.path.dirname(__file__))
+about = {}
+with open(os.path.join(here_dir, "src", "vk_client", "__about__.py")) as f:
+    exec(f.read(), about)
 
 tests_deps = [
     "tox",
@@ -11,17 +19,15 @@ captcha_handlers_deps = [
 ]
 
 setup(
-    name="vk-client",
-    version="0.0.1",
-    description="VK Python SDK.",
-    # long_description="",  # TODO: Add long description
+    name=about["__title__"],
+    version=about["__version__"],
+    description=about["__description__"],
     packages=find_packages("src"),
     package_dir={"": "src"},
     url="https://github.com/Suenweek/vk-client",
-    author="Suenweek",
-    author_email="suenweek@protonmail.com",
+    author=about["__author__"],
+    author_email=about["__author_email__"],
     install_requires=[
-        "attrs",
         "arrow",
         "cached-property",
         "six",
