@@ -16,6 +16,7 @@ cached-property = "*"
 "enum34" = "*"
 more-itertools = "*"
 arrow = "*"
+vk-client = {editable = true, path = "."}
 
 [requires]
 python_version = "2.7"
