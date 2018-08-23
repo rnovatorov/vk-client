@@ -20,6 +20,15 @@ class HasId(object):
         return self._id
 
 
+class HasUser(HasVk):
+
+    _user_id = NotImplemented
+
+    @property
+    def user(self):
+        return self._vk.User(self._user_id)
+
+
 class Authored(HasVk, HasId):
 
     _author_id = NotImplemented

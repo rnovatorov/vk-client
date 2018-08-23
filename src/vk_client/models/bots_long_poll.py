@@ -1,6 +1,6 @@
 import requests
 from six.moves.urllib import parse
-from vk_client import enums, validators
+from vk_client import validators
 from vk_client.models import _base
 
 
@@ -26,8 +26,8 @@ class BotsLongPoll(_base.Model):
         payload = response.json()
         self.ts = payload["ts"]
         return [
-            self._vk.GroupEvent(
-                type=enums.GroupEventType(update["type"]),
+            self._vk.GroupEvent.from_update(
+                type=update["type"],
                 object=update["object"]
             )
             for update in payload["updates"]
