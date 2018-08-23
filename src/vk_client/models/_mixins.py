@@ -24,21 +24,19 @@ class Authored(HasVk, HasId):
 
     _author_id = NotImplemented
 
-    # TODO: Move to User class.
     @property
-    def author_is_user(self):
+    def _author_is_user(self):
         return self._author_id > 0
 
-    # TODO: Move to Group class.
     @property
-    def author_is_group(self):
+    def _author_is_group(self):
         return self._author_id < 0
 
     @property
     def author(self):
-        if self.author_is_user:
+        if self._author_is_user:
             return self._vk.User(id=self._author_id)
-        elif self.author_is_group:
+        elif self._author_is_group:
             return self._vk.Group(id=self._author_id)
         else:
             raise errors.Unreachable
@@ -52,21 +50,19 @@ class Owned(HasVk, HasId):
     def full_id(self):
         return "{}_{}".format(self._owner_id, self.id)
 
-    # TODO: Move to User class.
     @property
-    def owner_is_user(self):
+    def _owner_is_user(self):
         return self._owner_id > 0
 
-    # TODO: Move to Group class.
     @property
-    def owner_is_group(self):
+    def _owner_is_group(self):
         return self._owner_id < 0
 
     @property
     def owner(self):
-        if self.owner_is_user:
+        if self._owner_is_user:
             return self._vk.User(id=self._owner_id)
-        elif self.owner_is_group:
+        elif self._owner_is_group:
             return self._vk.Group(id=self._owner_id)
         else:
             raise errors.Unreachable
