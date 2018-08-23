@@ -2,13 +2,13 @@ import arrow
 import more_itertools as mit
 import cached_property
 from vk_client import config, enums, errors, utils, validators
-from vk_client.models import base, mixins
+from vk_client.models import _base, _mixins
 
 
 class Post(
-    base.Model,
-    mixins.Authored,
-    mixins.Likable
+    _base.Model,
+    _mixins.Authored,
+    _mixins.Likable
 ):
     _likable_type = enums.LikableType.POST
 
@@ -51,7 +51,7 @@ class Post(
             raise errors.NotFound(self)
 
 
-class PostManager(base.ModelManager):
+class PostManager(_base.ModelManager):
 
     _model = Post
 

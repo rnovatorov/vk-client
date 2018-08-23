@@ -1,12 +1,12 @@
 import more_itertools as mit
 import cached_property
 from vk_client import config, errors, utils, validators
-from vk_client.models import base, mixins
+from vk_client.models import _base, _mixins
 
 
 class User(
-    base.Model,
-    mixins.HasId
+    _base.Model,
+    _mixins.HasId
 ):
     def __init__(self, vk, id):
         assert validators.positive(id)
@@ -38,7 +38,7 @@ class User(
             raise errors.NotFound(self)
 
 
-class UserManager(base.ModelManager):
+class UserManager(_base.ModelManager):
 
     _model = User
 

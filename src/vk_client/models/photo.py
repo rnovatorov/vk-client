@@ -1,12 +1,12 @@
 import more_itertools as mit
 import cached_property
 from vk_client import config, enums, errors, utils, validators
-from vk_client.models import base, mixins
+from vk_client.models import _base, _mixins
 
 
 class Photo(
-    base.Model,
-    mixins.Likable
+    _base.Model,
+    _mixins.Likable
 ):
     _likable_type = enums.LikableType.PHOTO
 
@@ -31,7 +31,7 @@ class Photo(
             raise errors.NotFound(self)
 
 
-class PhotoManager(base.ModelManager):
+class PhotoManager(_base.ModelManager):
 
     _model = Photo
 

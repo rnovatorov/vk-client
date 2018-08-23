@@ -1,13 +1,13 @@
 import requests
 from six.moves.urllib import parse
 from vk_client import enums, validators
-from vk_client.models import base
+from vk_client.models import _base
 
 
 ACT = "a_check"
 
 
-class BotsLongPoll(base.Model):
+class BotsLongPoll(_base.Model):
 
     def __init__(self, vk, server, key, ts, wait=25):
         assert validators.positive(ts)
@@ -43,7 +43,7 @@ class BotsLongPoll(base.Model):
         return "?".join([self.server, query])
 
 
-class BotsLongPollManager(base.ModelManager):
+class BotsLongPollManager(_base.ModelManager):
 
     _model = BotsLongPoll
 

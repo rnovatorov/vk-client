@@ -1,12 +1,12 @@
 import more_itertools as mit
 import cached_property
 from vk_client import config, errors, utils, validators
-from vk_client.models import base, mixins
+from vk_client.models import _base, _mixins
 
 
 class Group(
-    base.Model,
-    mixins.HasId
+    _base.Model,
+    _mixins.HasId
 ):
     def __init__(self, vk, id):
         assert validators.negative(id)
@@ -35,7 +35,7 @@ class Group(
             raise errors.NotFound(self)
 
 
-class GroupManager(base.ModelManager):
+class GroupManager(_base.ModelManager):
 
     _model = Group
 

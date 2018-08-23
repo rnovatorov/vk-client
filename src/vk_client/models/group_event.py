@@ -1,11 +1,11 @@
-from vk_client.models import base
+from vk_client.models import _base
 
 
-class GroupEvent(base.Model):
+class GroupEvent(_base.Model):
 
     pass
 
 
-class GroupEventManager(base.ModelManager):
+class GroupEventManager(_base.ModelManager):
 
     _model = GroupEvent
