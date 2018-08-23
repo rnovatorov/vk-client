@@ -37,3 +37,6 @@ class Message(
 class MessageManager(_base.ModelManager):
 
     _model = Message
+
+    def send(self, dst, message):
+        self._vk.api.messages.send(peer_id=dst.id, message=message)
