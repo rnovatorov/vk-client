@@ -38,5 +38,5 @@ class MessageManager(_base.ModelManager):
 
     _model = Message
 
-    def send(self, dst, message):
-        self._vk.api.messages.send(peer_id=dst.id, message=message)
+    def send(self, peer, message):
+        self._vk.api.messages.send(peer_id=peer.id, message=message)
