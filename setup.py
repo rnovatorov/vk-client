@@ -24,7 +24,7 @@ setup(
     description=about["__description__"],
     packages=find_packages("src"),
     package_dir={"": "src"},
-    url="https://github.com/Suenweek/vk-client",
+    url=about["__url__"],
     author=about["__author__"],
     author_email=about["__author_email__"],
     install_requires=[
