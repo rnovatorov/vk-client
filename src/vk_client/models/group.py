@@ -39,6 +39,12 @@ class GroupManager(_base.ModelManager):
 
     _model = Group
 
+    def get_current(self):
+        response = self._vk.api.groups.getById()
+        return self(
+            id=-mit.one(response)["id"]
+        )
+
     @utils.flattened()
     @utils.exhausted(step=config.SEARCH_CHUNK_SIZE)
     def from_search(self, q, offset, count):

@@ -47,8 +47,9 @@ class BotsLongPollManager(_base.ModelManager):
 
     _model = BotsLongPoll
 
-    def get(self, group_id):
-        cfg = self._vk.api.groups.getLongPollServer(group_id=group_id)
+    def get(self):
+        group_id = -self._vk.Group.get_current().id
+        cfg = self._vk.api.groups.getLongPollServer(group_id)
         return self(
             server=cfg["server"],
             key=cfg["key"],
