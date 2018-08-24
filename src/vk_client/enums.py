@@ -15,7 +15,7 @@ class GroupEventType(enum.Enum):
     MESSAGE_REPLY = "message_reply"
     MESSAGE_ALLOW = "message_allow"
     MESSAGE_DENY = "messages_deny"
-	
+
     # Photos
     PHOTO_NEW = "photo_new"
     PHOTO_COMMENT_NEW = "photo_comment_new"
@@ -25,24 +25,24 @@ class GroupEventType(enum.Enum):
 
     # Audio
     AUDIO_NEW = "audio_new"
-	
+
     # Video
     VIDEO_NEW = "video_new"
     VIDEO_COMMENT_NEW = "video_comment_new"
     VIDEO_COMMENT_EDIT = "video_comment_edit"
     VIDEO_COMMENT_RESTORE = "video_comment_restore"
     VIDEO_COMMENT_DELETE = "video_comment_delete"
-	
+
     # Wall posts
     WALL_POST_NEW = "wall_post_new"
     WALL_REPOST = "wall_repost"
-	
+
     # Wall comments
     WALL_REPLY_NEW = "wall_reply_new"
     WALL_REPLY_EDIT = "wall_reply_edit"
     WALL_REPLY_RESTORE = "wall_reply_restore"
     WALL_REPLY_DELETE = "wall_reply_delete"
-    
+
     # Boards
     BOARD_POST_NEW = "board_post_new"
     BOARD_POST_EDIT = "board_post_edit"
