@@ -35,7 +35,7 @@ class GroupEventType(enum.Enum):
 	
     # Wall posts
     WALL_POST_NEW = "wall_post_new"
-	WALL_REPOST = "wall_repost"
+    WALL_REPOST = "wall_repost"
 	
     # Wall comments
     WALL_REPLY_NEW = "wall_reply_new"
@@ -50,7 +50,7 @@ class GroupEventType(enum.Enum):
     BOARD_POST_DELETE = "board_post_delete"
 
     # Market
-    MARKET_COMMENT_NEW = "market_comment_new "
+    MARKET_COMMENT_NEW = "market_comment_new"
     MARKET_COMMENT_EDIT = "market_comment_edit"
     MARKET_COMMENT_RESTORE = "market_comment_restore"
     MARKET_COMMENT_DELETE = "market_comment_delete"
@@ -63,7 +63,7 @@ class GroupEventType(enum.Enum):
 
     # Other
     POLL_VOTE_NEW = "poll_vote_new"
-    GROUP_OFFICERS_EDIT = "group_officers_edit "
+    GROUP_OFFICERS_EDIT = "group_officers_edit"
     GROUP_CHANGE_SETTINGS = "group_change_settings"
     GROUP_CHANGE_PHOTO = "group_change_photo"
     VKPAY_TRANSACTION = "vkpay_transaction"
