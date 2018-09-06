@@ -1,6 +1,6 @@
 import io
 import requests
-import Tkinter as tk
+from six.moves import tkinter as tk
 from PIL import Image, ImageTk
 
 
