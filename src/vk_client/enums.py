@@ -67,3 +67,7 @@ class GroupEventType(enum.Enum):
     GROUP_CHANGE_SETTINGS = "group_change_settings"
     GROUP_CHANGE_PHOTO = "group_change_photo"
     VKPAY_TRANSACTION = "vkpay_transaction"
+
+
+class GroupJoinType(enum.Enum):
+    """TODO: Implement."""
