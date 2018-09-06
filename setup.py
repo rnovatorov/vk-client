@@ -13,10 +13,6 @@ tests_deps = [
     "pytest"
 ]
 
-captcha_handlers_deps = [
-    "requests",
-    "Pillow"
-]
 
 setup(
     name=about["__title__"],
@@ -33,11 +29,12 @@ setup(
         "six",
         "enum34",
         "more-itertools",
-        "vk"
+        "vk",
+        "requests",
+        "Pillow",
     ],
     tests_require=tests_deps,
     extras_require={
-        "tests": tests_deps,
-        "captcha-handlers": captcha_handlers_deps
+        "tests": tests_deps
     }
 )

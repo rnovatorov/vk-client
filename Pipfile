@@ -16,6 +16,7 @@ cached-property = "*"
 more-itertools = "*"
 arrow = "*"
 vk-client = {editable = true, path = "."}
+pillow = "*"
 
 [requires]
 python_version = "2.7"
