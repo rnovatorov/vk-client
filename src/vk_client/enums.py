@@ -70,4 +70,9 @@ class GroupEventType(enum.Enum):
 
 
 class GroupJoinType(enum.Enum):
-    """TODO: Implement."""
+
+    JOIN = "join"
+    UNSURE = "unsure"
+    ACCEPTED = "accepted"
+    APPROVED = "approved"
+    REQUEST = "request"
