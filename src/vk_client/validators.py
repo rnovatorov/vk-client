@@ -1,10 +1,13 @@
+from vk_client import utils
+
+
 def negative(value):
-    return value < 0
+    return utils.is_int(value) and value < 0
 
 
 def positive(value):
-    return value > 0
+    return utils.is_int(value) and value > 0
 
 
 def not_zero(value):
-    return value != 0
+    return utils.is_int(value) and value != 0

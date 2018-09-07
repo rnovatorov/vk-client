@@ -1,5 +1,6 @@
 import functools
 import itertools
+from six import integer_types
 from six.moves import range
 import more_itertools as mit
 
@@ -31,3 +32,7 @@ def offset_range(start, stop, step):
     chunks = mit.chunked(range(start, stop), step)
     for i, chunk in enumerate(chunks):
         yield i * step, len(chunk)
+
+
+def is_int(value):
+    return isinstance(value, integer_types)
