@@ -1,13 +1,7 @@
 import io
 import requests
 from PIL import Image, ImageTk
-
-try:
-    # Py3
-    from six.moves import tkinter as tk
-except ImportError:
-    # Py2
-    from six.moves import Tkinter as tk
+from six.moves import tkinter as tk
 
 
 class GuiCaptchaHandler(object):
