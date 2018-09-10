@@ -15,6 +15,9 @@ class User(
 
         self._id = id
 
+    def __repr__(self):
+        return "User({})".format(self.id)
+
     @property
     def first_name(self):
         return self._data["first_name"]
@@ -41,6 +44,13 @@ class User(
 class UserManager(_base.ModelManager):
 
     _model = User
+
+    @property
+    def current(self):
+        response = self._vk.api.users.get()
+        return self(
+            id=mit.one(response)["id"]
+        )
 
     @utils.flattened()
     @utils.exhausted(step=config.FAVE_CHUNK_SIZE_MAX)

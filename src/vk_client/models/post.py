@@ -23,6 +23,9 @@ class Post(
         self._author_id = author_id
         self._owner_id = owner_id
 
+    def __repr__(self):
+        return "Post({})".format(self.full_id)
+
     @property
     def date(self):
         return arrow.get(self._data["date"])

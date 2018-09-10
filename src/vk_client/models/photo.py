@@ -19,6 +19,9 @@ class Photo(
         self._id = id
         self._owner_id = owner_id
 
+    def __repr__(self):
+        return "Photo({})".format(self.full_id)
+
     @cached_property.cached_property
     def _data(self):
         response = self._vk.api.photos.getById(

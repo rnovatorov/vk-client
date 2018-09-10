@@ -1,6 +1,7 @@
 import arrow
 import more_itertools as mit
 import cached_property
+from collections import Iterable
 from vk_client import validators
 from vk_client.models import _base, _mixins
 
@@ -15,6 +16,9 @@ class Message(
         super(Message, self).__init__(vk)
 
         self._id = id
+
+    def __repr__(self):
+        return "Message({})".format(self.id)
 
     @property
     def text(self):
@@ -38,5 +42,16 @@ class MessageManager(_base.ModelManager):
 
     _model = Message
 
+    def broadcast(self, peers, message):
+        assert isinstance(peers, Iterable)
+
+        self._vk.api.messages.send(
+            peer_ids=','.join(str(peer.id) for peer in peers),
+            message=message
+        )
+
     def send(self, peer, message):
-        self._vk.api.messages.send(peer_id=peer.id, message=message)
+        self._vk.api.messages.send(
+            peer_id=peer.id,
+            message=message
+        )

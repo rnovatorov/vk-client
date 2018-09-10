@@ -39,7 +39,8 @@ class GroupManager(_base.ModelManager):
 
     _model = Group
 
-    def get_current(self):
+    @property
+    def current(self):
         response = self._vk.api.groups.getById()
         return self(
             id=-mit.one(response)["id"]

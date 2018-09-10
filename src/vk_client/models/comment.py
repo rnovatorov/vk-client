@@ -27,6 +27,9 @@ class Comment(
         self._post_id = post_id
         self._post_author_id = post_author_id
 
+    def __repr__(self):
+        return "Comment({})".format(self.full_id)
+
     @property
     def post(self):
         return self._vk.Post.from_comment(self)
