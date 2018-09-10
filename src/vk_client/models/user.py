@@ -26,6 +26,10 @@ class User(
     def last_name(self):
         return self._data["last_name"]
 
+    @property
+    def full_name(self):
+        return "{} {}".format(self.first_name, self.last_name)
+
     def get_posts(self):
         return self._vk.Post.from_owner(self)
 
