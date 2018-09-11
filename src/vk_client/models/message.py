@@ -17,6 +17,15 @@ class Message(
 
         self._id = id
 
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return other.id == self.id
+
+        return NotImplemented
+
     def __repr__(self):
         return "Message({})".format(self.id)
 

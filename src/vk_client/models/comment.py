@@ -27,6 +27,19 @@ class Comment(
         self._post_id = post_id
         self._post_author_id = post_author_id
 
+    def __hash__(self):
+        return hash((self.full_id, self._post_id))
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return (
+                other.full_id == self.full_id
+                and
+                other._post_id == self._post_id
+            )
+
+        return NotImplemented
+
     def __repr__(self):
         return "Comment({})".format(self.full_id)
 

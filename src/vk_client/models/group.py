@@ -15,6 +15,15 @@ class Group(
 
         self._id = id
 
+    def __hash__(self):
+        return hash(self.id)
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return other.id == self.id
+
+        return NotImplemented
+
     @property
     def name(self):
         return self._data["name"]

@@ -23,6 +23,15 @@ class Post(
         self._author_id = author_id
         self._owner_id = owner_id
 
+    def __hash__(self):
+        return hash(self.full_id)
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return other.full_id == self.full_id
+
+        return NotImplemented
+
     def __repr__(self):
         return "Post({})".format(self.full_id)
 
