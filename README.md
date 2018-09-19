@@ -5,12 +5,12 @@
 
 ## Install
 
-From PyPI:
+Stable from PyPI:
 ```bash
 pip install vk-client
 ```
 
-From Github:
+Bleeding edge from Github:
 ```bash
 pip install git+https://github.com/Suenweek/vk-client#egg=vk-client
 ```
