@@ -2,6 +2,8 @@
 
 `vk-client` is a Python 2/3 high level VK API.
 
+## Status
+No longer maintained.
 
 ## Install
 
